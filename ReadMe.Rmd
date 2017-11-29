@@ -1,0 +1,95 @@
+# Dforest
+
+## Introduction
+Dforest is a R-implementation of Decision Forest algorithm that combines the predictions of multiple independent decision tree models for a consensus decision. In particular, Decision Forest is a novel pattern-recognition method which can be used to analyze: 
+
+ 1. DNA microarray data; 
+ 2. Surface-Enhanced Laser Desorption/Ionization Time-of-Flight Mass Spectrometry (SELDI-TOF-MS) data; and 
+ 3. Structure-Activity Relation (SAR) data. 
+ 
+In this package, three fundamental functions are provided, as 
+
+ 1. DF_train, 
+ 2. DF_pred, and 
+ 3. DF_CV. 
+ 
+run Dforest() to see more instructions. 
+
+**Reference**  
+[Tong, Weida, et al. "Decision forest: combining the predictions of multiple independent decision tree models." Journal of Chemical Information and Computer Sciences 43.2 (2003): 525-531.](http://pubs.acs.org/doi/abs/10.1021/ci020058s)
+
+## Index of Functionality
+
+First, simply install and load Dforest package into your R environment:  
+```{r}
+if (!require(Dforest)){
+  install.packages("Dforest",repos = "https://cran.r-project.org/")
+}
+library(Dforest)
+```  
+  
+#### Training Decision Forest Model - DF_train
+
+DF_train() is used to train Decision Forest model based on training dataset.  
+Here is an simple example for using this function.  
+```{r, cache=T}
+  data(demo_simple)
+  # for simplicity, we only used two-classes classification.
+   X <- subset(data_dili$X, data_dili$Y!="Less-DILI-Concern")
+   Y <- subset(data_dili$Y, data_dili$Y!="Less-DILI-Concern") 
+   names(Y)=rownames(X)
+
+   random_seq=sample(nrow(X))
+   split_rate=3
+   split_sample = suppressWarnings(split(random_seq,1:split_rate))
+   Train_X = X[-random_seq[split_sample[[1]]],]
+   Train_Y = Y[-random_seq[split_sample[[1]]]]
+   Test_X = X[random_seq[split_sample[[1]]],]
+   Test_Y = Y[random_seq[split_sample[[1]]]]
+   used_model = DF_train(Train_X, Train_Y)
+``` 
+Here is the structure of built Decision Forest Model:
+```{r, echo=F}
+summary(used_model)
+```
+Where the performance stored the *Fitting* performance of training process.  
+Let's take a look:  
+- The Accuracy (ACC) is `r used_model$performance$ACC `;  
+- The Matttews' Correlation Coefficient (MCC) is `r used_model$performance$MCC`;  
+- The Balanced Accuracy (bACC) is `r used_model$performance$bACC`.  
+
+Due to the dataset we used here, we found that *DILI* is not a well predicted endpoint! 
+
+OK, now let's see how about the performance on testing dataset.
+``` {r}
+Pred_result = DF_pred(used_model,Test_X,Test_Y)
+```
+
+Similarly, let's take a look at the predicting performance:  
+- The Accuracy (ACC) is `r Pred_result$performance$ACC `;  
+- The Matttews' Correlation Coefficient (MCC) is `r Pred_result$performance$MCC`;  
+- The Balanced Accuracy (bACC) is `r Pred_result$performance$bACC`.  
+ 
+Compared the result from training and testing performance:
+```{r echo=F}
+ matrix(c(round(used_model$performance$ACC,3), round(Pred_result$performance$ACC,3), 
+          round(used_model$performance$MCC,3), round(Pred_result$performance$MCC,3), 
+          round(used_model$performance$bACC,3), round(Pred_result$performance$bACC,3)),
+        nrow=2,ncol=3, dimnames=list(c("Training", "Testing"),c("ACC","MCC","bACC"))
+ )
+```  
+
+#### Cross validation analysis
+Sometime, you want to run cross validation analysis on the entire dataset.
+
+```{r, cache=T}
+CV_result = DF_CV(Train_X, Train_Y)
+DF_CVsummary(CV_result,plot = T)
+```
+
+Finally, Let's see something Fancy with only one command.
+
+```{r, cache=F}
+Result = DF_easy(Train_X, Train_Y, Test_X, Test_Y)
+```
+
