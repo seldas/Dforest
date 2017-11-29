@@ -1,3 +1,10 @@
+---
+title: "Dforest_Readme"
+author: Leihong Wu
+date: Nov 29, 2017
+output: html_document
+---
+
 # Dforest
 
 ## Introduction
@@ -32,8 +39,9 @@ library(Dforest)
 
 DF_train() is used to train Decision Forest model based on training dataset.  
 Here is an simple example for using this function.  
-```{r, cache=T}
+```{r, cache=F}
   data(demo_simple)
+  set.seed(188)
   # for simplicity, we only used two-classes classification.
    X <- subset(data_dili$X, data_dili$Y!="Less-DILI-Concern")
    Y <- subset(data_dili$Y, data_dili$Y!="Less-DILI-Concern") 
@@ -82,7 +90,7 @@ Compared the result from training and testing performance:
 #### Cross validation analysis
 Sometime, you want to run cross validation analysis on the entire dataset.
 
-```{r, cache=T}
+```{r, cache=F}
 CV_result = DF_CV(Train_X, Train_Y)
 DF_CVsummary(CV_result,plot = T)
 ```

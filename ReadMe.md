@@ -48,6 +48,7 @@ dataset.
 Here is an simple example for using this function.
 
       data(demo_simple)
+      set.seed(188)
       # for simplicity, we only used two-classes classification.
        X <- subset(data_dili$X, data_dili$Y!="Less-DILI-Concern")
        Y <- subset(data_dili$Y, data_dili$Y!="Less-DILI-Concern") 
@@ -67,17 +68,17 @@ Here is the structure of built Decision Forest Model:
     ##             Length Class  Mode     
     ## performance   3    -none- list     
     ## pred        652    -none- numeric  
-    ## detail       90    -none- list     
-    ## models       15    -none- list     
+    ## detail       66    -none- list     
+    ## models       11    -none- list     
     ## Method        1    -none- character
     ## cp            1    -none- numeric
 
 Where the performance stored the *Fitting* performance of training
 process.  
 Let's take a look:  
-- The Accuracy (ACC) is 0.776;  
-- The Matttews' Correlation Coefficient (MCC) is 0.5239851;  
-- The Balanced Accuracy (bACC) is 0.7411364.
+- The Accuracy (ACC) is 0.752;  
+- The Matttews' Correlation Coefficient (MCC) is 0.4794179;  
+- The Balanced Accuracy (bACC) is 0.7165258.
 
 Due to the dataset we used here, we found that *DILI* is not a well
 predicted endpoint!
@@ -87,15 +88,15 @@ OK, now let's see how about the performance on testing dataset.
     Pred_result = DF_pred(used_model,Test_X,Test_Y)
 
 Similarly, let's take a look at the predicting performance:  
-- The Accuracy (ACC) is 0.644;  
-- The Matttews' Correlation Coefficient (MCC) is 0.2478768;  
-- The Balanced Accuracy (bACC) is 0.6105458.
+- The Accuracy (ACC) is 0.693;  
+- The Matttews' Correlation Coefficient (MCC) is 0.3362008;  
+- The Balanced Accuracy (bACC) is 0.6464678.
 
 Compared the result from training and testing performance:
 
     ##            ACC   MCC  bACC
-    ## Training 0.776 0.524 0.741
-    ## Testing  0.644 0.248 0.611
+    ## Training 0.752 0.479 0.717
+    ## Testing  0.693 0.336 0.646
 
 #### Cross validation analysis
 
@@ -105,8 +106,8 @@ dataset.
     CV_result = DF_CV(Train_X, Train_Y)
     DF_CVsummary(CV_result,plot = T)
 
-    ## Overall 5-fold Cross-Validation result: 0.676
-    ## Most 5 used features: D015, D123, D144, D249, D563
+    ## Overall 5-fold Cross-Validation result: 0.69
+    ## Most 5 used features: D015, D123, D152, D485, D563
     ## Top 5 frequencies in (5): 5, 5, 5, 5, 5
 
 ![](ReadMe_files/figure-markdown_strict/unnamed-chunk-6-1.png)
