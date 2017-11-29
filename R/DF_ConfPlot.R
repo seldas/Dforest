@@ -46,8 +46,8 @@ DF_ConfPlot = function (Pred_result, Label, bin=20, plot = T, smooth = F){
       }
       bACC = mean(accuracy_sep)
 
-      ACC_Conf[i,2] = round(True_prediction / length(conf_label),3)
-      ACC_Conf[i,3] = round(bACC,3)
+      ACC_Conf[i,2] = round(True_prediction / length(conf_label),3)*100
+      ACC_Conf[i,3] = round(bACC,3)*100
     }else{
       ACC_Conf[i,2] = 0
       ACC_Conf[i,3] = 0
@@ -58,21 +58,27 @@ DF_ConfPlot = function (Pred_result, Label, bin=20, plot = T, smooth = F){
   if (plot == T){
     plot_matrix = as.data.frame(ACC_Conf)
     colnames(plot_matrix)=c("ConfidenceLevel", "Accuracy", "BalancedAccuracy", "PercentageOfSamples")
-    plot_matrix[,"PercentageOfSamples"] = plot_matrix[,"PercentageOfSamples"]/sum(plot_matrix[,"PercentageOfSamples"])
-    plot_matrix = plot_matrix[-which(plot_matrix[,3]==0),]
+    plot_matrix[,"PercentageOfSamples"] = plot_matrix[,"PercentageOfSamples"]/sum(plot_matrix[,"PercentageOfSamples"])*100
+    empty_val = which(plot_matrix[,3]==0)
+    if (length(empty_val>0)){
+      plot_matrix = plot_matrix[-empty_val,]
+    }
     #fit_line = lm(formula = plot_matrix[,2]~plot_matrix[,1])
     p=ggplot(plot_matrix)+
-      geom_line(mapping = aes(x=ConfidenceLevel, y=Accuracy), stat = "Identity", colour="gray", size =0.5)+
-      geom_point(mapping = aes(x=ConfidenceLevel, y=Accuracy, color=Accuracy),size = 4)+
-      scale_color_continuous(low="blue",high="darkblue")+
-      #geom_line(mapping = aes(x=ConfidenceLevel, y=BalancedAccuracy), stat = "Identity", colour="gray", size =0.5)+
-      #geom_smooth(mapping = aes(x=ConfidenceLevel, y=BalancedAccuracy),fill=NA,colour="green")+
-      geom_bar(mapping = aes(x=ConfidenceLevel, y=PercentageOfSamples, fill = PercentageOfSamples),stat  = "Identity", colour = "gray")+
-      scale_fill_continuous(low="firebrick1",high="firebrick4")+
-      ylim(0,1)
+      geom_line(aes(x=ConfidenceLevel, y=Accuracy), stat = "Identity", colour="gray", size = 0.5)+
+      geom_point(aes(x=ConfidenceLevel, y=Accuracy, color=Accuracy), size = 4)+
+      scale_color_continuous(low="blue",high="darkblue",guide = F)+
+      geom_bar(aes(x=ConfidenceLevel, y=PercentageOfSamples, fill = PercentageOfSamples),stat  = "Identity", colour = "gray")+
+      scale_fill_continuous(low="firebrick1",high="firebrick4",guide = F)+
+      scale_y_continuous(name = "Accuracy", breaks = c(0,20,40,60,80,100),
+                         minor_breaks = c(10,30,50,70,90),limits = c(-5,100))+
+      geom_label(aes(x=median(ConfidenceLevel), y=-5 , label = "Samples (%)"), size = 5, fill = "firebrick4",color ="white")+
+      theme(axis.title.y = element_text(color = "Blue", face="bold", size = 15))+ theme_bw()
+
     if (smooth == T){
       p=p+geom_smooth(mapping = aes(x=ConfidenceLevel, y=BalancedAccuracy),fill=NA)
     }
+
     # p+theme(legend.position="bottom")
     # p+theme(legend.title = element_text(colour="blue", size=16, face="bold"))
     return(p)
@@ -127,8 +133,8 @@ DF_ConfPlot_accu = function (Pred_result, Label, bin=20, plot = T, smooth = F){
       }
       bACC = mean(accuracy_sep)
 
-      ACC_Conf[i,2] = round(True_prediction / length(conf_label),3)
-      ACC_Conf[i,3] = round(bACC,3)
+      ACC_Conf[i,2] = round(True_prediction / length(conf_label),3)*100
+      ACC_Conf[i,3] = round(bACC,3)*100
     }else{
       ACC_Conf[i,2] = 0
       ACC_Conf[i,3] = 0
@@ -139,19 +145,26 @@ DF_ConfPlot_accu = function (Pred_result, Label, bin=20, plot = T, smooth = F){
   if (plot == T){
     plot_matrix = as.data.frame(ACC_Conf)
     colnames(plot_matrix)=c("ConfidenceLevel", "Accuracy", "BalancedAccuracy", "PercentageOfSamples")
-    plot_matrix[,"PercentageOfSamples"] = plot_matrix[,"PercentageOfSamples"]/length(Label)
-    plot_matrix = plot_matrix[-which(plot_matrix[,3]==0),]
+    plot_matrix[,"PercentageOfSamples"] = plot_matrix[,"PercentageOfSamples"]/length(Label)*100
+    empty_val = which(plot_matrix[,3]==0)
+    if (length(empty_val>0)){
+      plot_matrix = plot_matrix[-empty_val,]
+    }
+
     #fit_line = lm(formula = plot_matrix[,2]~plot_matrix[,1])
     p=ggplot(plot_matrix)+
       geom_bar(mapping = aes(x=ConfidenceLevel, y=PercentageOfSamples, fill = PercentageOfSamples, alpha = 0.5),stat  = "Identity", colour = "gray")+
-      scale_fill_continuous(low="firebrick1",high="firebrick4")+
+      scale_fill_continuous(low="firebrick1",high="firebrick4",guide = F)+
       scale_alpha(range = c(0.4,0.4),guide = "none")+
       geom_line(mapping = aes(x=ConfidenceLevel, y=Accuracy), stat = "Identity", colour="gray", size =0.5)+
       geom_point(mapping = aes(x=ConfidenceLevel, y=Accuracy, color=Accuracy),size = 4)+
-      scale_color_continuous(low="blue",high="darkblue")+
-      scale_y_continuous(breaks = c(0,0.2,0.4,0.6,0.8,1), minor_breaks = c(0.1,0.3,0.5,0.7,0.9),limits = c(0,1))
+      scale_color_continuous(low="blue",high="darkblue",guide = F)+
+      scale_y_continuous(name = "Accuracy", breaks = c(0,20,40,60,80,100),
+                         minor_breaks = c(10,30,50,70,90),limits = c(-5,100))+
+      geom_label(aes(x=median(ConfidenceLevel), y=-5 , label = "Samples (%)"), size = 5, fill = "firebrick4",color ="white")+
+      theme(axis.title.y = element_text(color = "Blue", face="bold", size = 15))+theme_bw()
     if (smooth == T){
-      p=p+geom_smooth(mapping = aes(x=ConfidenceLevel, y=BalancedAccuracy),fill=NA)
+      p=p+geom_smooth(mapping = aes(x=ConfidenceLevel, y=Accuracy),fill=NA)
     }
     # p+theme(legend.position="bottom")
     # p+theme(legend.title = element_text(colour="blue", size=16, face="bold"))
