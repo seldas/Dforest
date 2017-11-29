@@ -5,6 +5,8 @@
 #' @author Leihong.Wu
 #'
 #' @export
+#' @examples
+#'   Dforest()
 
 # Load Data
 Dforest = function (){
@@ -20,7 +22,7 @@ Dforest = function (){
   cat("\tTraining: model = DF_train(Train_X, Train_Y) \n")
   cat("\tTesting: Pred_result = DF_pred(model, Test_X, Test_Y) \n")
   cat("2. Cross-validation:\n")
-  cat("\tCross-validation within dataset: CV_result = DF_train_CV(Train_X, Train_Y, CV_fold=5) # 5-fold cross-validation \n")
+  cat("\tCross-validation within dataset: CV_result = DF_CV(Train_X, Train_Y, CV_fold=5) # 5-fold cross-validation \n")
   cat("3. Performance evaluation: \n")
   cat("\tFor training model :  DF_Trainsummary(used_model) \n")
   cat("\tFor Cross-validation: DF_CVsummary(CV_result) \n")
