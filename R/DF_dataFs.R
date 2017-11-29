@@ -10,8 +10,11 @@
 #' @return Keep_feat: qualified features in data matrix after filtering
 #' @export
 #'
-#'
-
+#' @examples
+#'  ##data(iris)
+#'   X = iris[iris[,5]!="setosa",1:4]
+#'   Y = iris[iris[,5]!="setosa",5]
+#'   used_feat = DF_dataFs(X, Y)
 
 DF_dataFs = function (X, Y, p_val=0.05){
   Y = factor(Y)
