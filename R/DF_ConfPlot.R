@@ -72,8 +72,11 @@ DF_ConfPlot = function (Pred_result, Label, bin=20, plot = T, smooth = F){
       scale_fill_continuous(low="firebrick1",high="firebrick4",guide = F)+
       scale_y_continuous(name = "Accuracy", breaks = c(0,20,40,60,80,100),
                          minor_breaks = c(10,30,50,70,90),limits = c(-5,100))+
-      geom_label(aes(x=median(ConfidenceLevel), y=-5 , label = "Samples (%)"), size = 5, fill = "firebrick4",color ="white")+
-      theme(axis.title.y = element_text(color = "Blue", face="bold", size = 15))+ theme_bw()
+      #geom_label(aes(x=median(ConfidenceLevel), y=95 , label = "Samples (%)"), fill = "firebrick4", color ="white", alpha = 0.5)+
+      theme_bw()+
+      theme(axis.title.y = element_text(color = "Blue", face="bold", size = 15))+
+      theme(axis.title.x = element_text(color = "black", face="bold"))+
+      labs(title = "Samples (%)")+ theme(plot.title = element_text(colour = "firebrick4", hjust = 0.5))
 
     if (smooth == T){
       p=p+geom_smooth(mapping = aes(x=ConfidenceLevel, y=BalancedAccuracy),fill=NA)
@@ -161,8 +164,12 @@ DF_ConfPlot_accu = function (Pred_result, Label, bin=20, plot = T, smooth = F){
       scale_color_continuous(low="blue",high="darkblue",guide = F)+
       scale_y_continuous(name = "Accuracy", breaks = c(0,20,40,60,80,100),
                          minor_breaks = c(10,30,50,70,90),limits = c(-5,100))+
-      geom_label(aes(x=median(ConfidenceLevel), y=-5 , label = "Samples (%)"), size = 5, fill = "firebrick4",color ="white")+
-      theme(axis.title.y = element_text(color = "Blue", face="bold", size = 15))+theme_bw()
+      #geom_label(aes(x=median(ConfidenceLevel), y=95 , label = "Samples (%)"), fill = "firebrick4", color ="white", alpha = 0.5)+
+      theme_bw()+
+      theme(axis.title.y = element_text(color = "Blue", face="bold", size = 15))+
+      theme(axis.title.x = element_text(color = "black", face="bold"))+
+      labs(title = "Samples (%)")+ theme(plot.title = element_text(colour = "firebrick4", hjust = 0.5))
+
     if (smooth == T){
       p=p+geom_smooth(mapping = aes(x=ConfidenceLevel, y=Accuracy),fill=NA)
     }
