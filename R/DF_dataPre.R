@@ -10,9 +10,12 @@
 #' @return Keep_feat: qualified features in data matrix after filtering
 #' @export
 #'
-#'
+#' @examples
+#'  ##data(iris)
+#'   X = iris[,1:4]
+#'   Keep_feat = DF_dataPre(X)
 
-DF_dataPre = function (X, Y=NULL, thres=0.95){
+DF_dataPre = function (X, thres=0.95){
   zero_col = which(apply(X,2,function (x) {length(which(x==0))})==nrow(X))
   if (length(zero_col>0)){
     X_fil = X[,-zero_col]
