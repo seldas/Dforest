@@ -2,6 +2,9 @@
 #'
 #' @param X dataset
 #' @param Y data_Labels
+#' @param min_split minimum number of node in each leaf
+#' @param cp pre-defined Complexity Parameter (CP) rpart program
+#'
 #' @return Decision Tree Model with pruning
 #'   Implemented by rpart
 #' @seealso \code{rpart}
@@ -10,11 +13,11 @@
 #' @export
 #'
 
-Con_DT = function (X,Y,min_leaf=10,cp=0.01){
+Con_DT = function (X,Y,min_split=10,cp=0.01){
 
   # cp controls the model performance to make sure the model is not over-fitting
   # t=proc.time()
-  rc = rpart.control(minbucket = min_leaf, minsplot = min_leaf*3, xval = 1, cp=cp)
+  rc = rpart.control(minsplit = min_split, minbucket = min_split/3, xval = 0, cp=cp)
   DT_Model <- rpart(Y ~ ., method="class", data=X, control = rc)
   # proc.time()-t
   # DT_Model$cptable
@@ -152,3 +155,43 @@ DF_calp = function(X, Y){
   return(pV)
 }
 
+#' Performance evaluation from other modeling algorithm Result
+#'
+#' @param pred Predictions
+#' @param label Known-endpoint
+#' @return result$ACC:   Predicting Accuracy
+#' @return result$MIS:   MisClassfication Counts
+#' @return result$MCC:   Matthew's Correlation Coefficients
+#' @return result$bACC:  balanced Accuracy
+#'
+#' @export
+#'
+#'
+cal_MCC = function(pred,label){
+  Pred_label = pred
+  True_prediction = length(which(Pred_label==label))
+
+  MIS = length(label)-True_prediction
+  ACC = round(True_prediction / length(label),3)
+
+  label_level = levels(factor(label))
+
+  accuracy_sep = matrix(0,nrow=length(label_level),ncol=1)
+  for (i in 1:length(label_level)){
+    accuracy_sep[i,1]=length(which(Pred_label==label & label == label_level[i]))/length(which(label == label_level[i]))
+  }
+  bACC = mean(accuracy_sep)
+
+  if (length(levels(factor(label)))==2){
+    TP = length(which(Pred_label==label & Pred_label ==label_level[1]))
+    TN = length(which(Pred_label==label & Pred_label ==label_level[2]))
+    FP = length(which(Pred_label!=label & Pred_label ==label_level[1]))
+    FN = length(which(Pred_label!=label & Pred_label ==label_level[2]))
+
+    MCC=((TP*TN)-(FP*FN))/sqrt((TP+FP)*(TP+FN)*(TN+FP)*(TN+FN))
+  }else{
+    MCC=-1 # Not Available for multi-class prediction
+  }
+  result = list(ACC=ACC,MIS=MIS,MCC=MCC,bACC=bACC)
+  return(result)
+}
